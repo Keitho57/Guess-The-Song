@@ -9,3 +9,13 @@ export const playingTrackState = atom({
   key: "playingTrackState",
   default: "" as any,
 });
+
+export const playlistState = atom({
+  key: "playlistIdState",
+  default: "5rOwkANoQvj0qDPgXw73Ts",
+});
+
+export const GetRandomSongState = atom({
+  key:"GetRandomSongState",
+  default: "" as any,
+});

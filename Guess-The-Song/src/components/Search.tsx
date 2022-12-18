@@ -19,9 +19,9 @@ function Search({ search, setSearch }: Search) {
       />
       <div className="flex items-center divide-dotted divide-x-2 divide-[#333] ml-auto">
         <div className="flex space-x-2 pr-5">
-          <button className="tag">Minimal</button>
-          <button className="tag">Chillpop</button>
-          <button className="tag">Chill</button>
+          <button className="tag">Study</button>
+          <button className="tag">Drill</button>
+          <button className="tag">Work Out</button>
         </div>
         <div className="flex items-center space-x-1.5 text-[#cecece] pl-4">
           <MdOutlineShortText className="text-2xl animate-pulse" />

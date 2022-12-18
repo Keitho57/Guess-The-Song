@@ -7,7 +7,11 @@ import {
   HiChartBar,
   HiClock,
   HiDotsHorizontal,
+  HiQuestionMarkCircle
 } from "react-icons/hi";
+import { GiSoundWaves,
+  GiConsoleController} from "react-icons/gi";
+
 
 function Sidebar() {
   return (
@@ -18,13 +22,17 @@ function Sidebar() {
         height={56}
         objectFit="contain"
       />
-      <div className="flex flex-col space-y-6">
+      <div className="flex flex-col space-y-7">
         <HiHome className="sidebarIcon text-green-400 opacity-[0.85]" />
         <HiStar className="sidebarIcon text-2xl" />
         <HiMicrophone className="sidebarIcon" />
         <HiChartBar className="sidebarIcon" />
         <HiClock className="sidebarIcon" />
+        <HiQuestionMarkCircle className="sidebarIcon" />
+        <GiSoundWaves className="sidebarIcon" />
+        <GiConsoleController className="sidebarIcon" />
         <HiDotsHorizontal className="sidebarIcon" />
+        
       </div>
     </section>
   );

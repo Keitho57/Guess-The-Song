@@ -2,6 +2,10 @@ import NextAuth from "next-auth";
 import { JWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";
 
+// var SPOTIFY_CLIENT_ID ="ddd142437d40434c85be1ec116120b83"
+// var SPOTIFY_CLIENT_SECRET ="2832627dd6fe497dbbb3302383412835"
+
+
 /**
  * Takes a token, and returns a new token with updated
  * `accessToken` and `accessTokenExpires`. If an error occurs,
@@ -24,7 +28,7 @@ async function refreshAccessToken(token: JWT) {
       },
       method: "POST",
     });
-
+ 
     const refreshedTokens = await response.json();
 
     if (!response.ok) {
