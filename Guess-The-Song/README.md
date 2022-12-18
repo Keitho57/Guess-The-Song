@@ -1,8 +1,8 @@
-# Spome - Music Player
+# Guess That Song, Spotify Music programming project
 
-Simple Spotify Player with search fuctionality and recent tracks
+A basic spotify application with games for guessing built in.
 
-Tech Stack used in project:
+Stack used:
 
 - NextJs
 - tRPC
@@ -10,4 +10,3 @@ Tech Stack used in project:
 - Tailwind
 - Prisma
 
-https://user-images.githubusercontent.com/86293253/180745397-60886b8f-09bd-402f-9050-24038e96b021.mp4
