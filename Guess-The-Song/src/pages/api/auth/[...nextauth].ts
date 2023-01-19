@@ -1,10 +1,8 @@
 import NextAuth from "next-auth";
 import { JWT } from "next-auth/jwt";
 import SpotifyProvider from "next-auth/providers/spotify";
-
-// var SPOTIFY_CLIENT_ID ="ddd142437d40434c85be1ec116120b83"
-// var SPOTIFY_CLIENT_SECRET ="2832627dd6fe497dbbb3302383412835"
-
+const client_id = 'ddd142437d40434c85be1ec116120b83'
+const client_secret = '2832627dd6fe497dbbb3302383412835'
 
 /**
  * Takes a token, and returns a new token with updated
@@ -16,8 +14,8 @@ async function refreshAccessToken(token: JWT) {
     const url =
       "https://accounts.spotify.com/api/token?" +
       new URLSearchParams({
-        client_id: process.env.SPOTIFY_CLIENT_ID as string,
-        client_secret: process.env.SPOTIFY_CLIENT_SECRET as string,
+        clientId: client_id,
+        clientSecret: client_secret,
         grant_type: "refresh_token" as string,
         refresh_token: token.refreshToken as string,
       });
@@ -54,8 +52,8 @@ async function refreshAccessToken(token: JWT) {
 export default NextAuth({
   providers: [
     SpotifyProvider({
-      clientId: process.env.SPOTIFY_CLIENT_ID as string,
-      clientSecret: process.env.SPOTIFY_CLIENT_SECRET as string,
+      clientId: client_id,
+      clientSecret: client_secret,
       authorization:
         "https://accounts.spotify.com/authorize?scope=user-read-email,playlist-read-private,user-read-email,streaming,user-read-private,user-library-read,user-library-modify,user-read-playback-state,user-modify-playback-state,user-read-recently-played,user-follow-read" as string,
     }),
