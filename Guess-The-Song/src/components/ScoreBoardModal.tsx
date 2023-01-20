@@ -1,11 +1,16 @@
-import React, { useState, useRef, Fragment } from 'react';
+import React, { useState, useRef, Fragment, useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { ExclamationCircleIcon, FastForwardIcon } from '@heroicons/react/solid';
 
-const ScoreBoardModal = () => {
+const ScoreBoardModal = ({ score, startGame }: any) => {
   const [open, setOpen] = useState(true);
+  const [highscore, setHighscore] = useState(10);
 
   const cancelButtonRef = useRef(null);
+
+  useEffect(() => {
+    if (score > highscore) setHighscore(score);
+  }, []);
 
   return (
     <Transition.Root
@@ -55,7 +60,7 @@ const ScoreBoardModal = () => {
                         your score
                       </h2>
                       <h3 className='mx-auto my-6 text-center align-middle text-9xl'>
-                        3
+                        {score}
                       </h3>
                     </div>
                     <div className='w-56 h-56 px-10 input-shadow rounded-lg bg-[#111111] text-4xl text-yellow-500'>
@@ -63,7 +68,7 @@ const ScoreBoardModal = () => {
                         high score
                       </h2>
                       <h3 className='mx-auto my-6 text-center align-middle text-9xl'>
-                        3
+                        {highscore}
                       </h3>
                     </div>
                   </div>
@@ -72,7 +77,10 @@ const ScoreBoardModal = () => {
                   <button
                     type='button'
                     className='flex items-center justify-center w-3/4 rounded-md bg-green-500 px-4 py-2 text-2xl font-medium text-white focus:outline-none'
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      setOpen(false);
+                      startGame();
+                    }}
                     ref={cancelButtonRef}
                   >
                     play again

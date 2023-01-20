@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 
 import SpotifyPlayer from 'react-spotify-web-playback';
@@ -7,30 +8,53 @@ import { spotifyApi } from '../../utils/spotify';
 import ScoreBoardModal from '../../components/ScoreBoardModal';
 import Sidebar from '../../components/Sidebar';
 
-import { ArrowRightIcon, FastForwardIcon, XIcon } from '@heroicons/react/solid';
+import {
+  ArrowRightIcon,
+  CheckCircleIcon,
+  FastForwardIcon,
+  PauseIcon,
+  PlayIcon,
+  XCircleIcon,
+  XIcon,
+} from '@heroicons/react/solid';
 import { BiUndo } from 'react-icons/bi';
-import getRandomSong from '../api/getRandomSong';
-import Player from '../../components/Player';
+import { Transition } from '@headlessui/react';
 
 const TIMER_LENGTH = 30;
+const TRACK_LIMIT = 50;
 
 const Game = () => {
   const [timer, setTimer] = useState(TIMER_LENGTH);
-  const [song, setSong] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [song, setSong] = useState<any>(null);
+  const [tracks, setTracks] = useState<any>();
   const [guess, setGuess] = useState('');
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(0);
-  const [tracks, setTracks] = useState<any>();
+  const [showMessage, setShowMessage] = useState<any>(null);
+
+  const rightAnswer = () => {
+    setShowMessage('right');
+    setTimeout(() => {
+      setShowMessage(false);
+    }, 500);
+  };
+
+  const wrongAnswer = () => {
+    setShowMessage('wrong');
+    setTimeout(() => {
+      setShowMessage(false);
+    }, 500);
+  };
 
   const { data: session } = useSession();
   const accessToken: any = session?.accessToken;
-  console.log('session', session?.accessToken);
 
   useEffect(() => {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
     spotifyApi
-      .getMyRecentlyPlayedTracks({ limit: 50 })
+      .getMyRecentlyPlayedTracks({ limit: TRACK_LIMIT })
       .then((res: { body: { items: { track: any }[] } }) => {
         setTracks(
           res.body.items.map(({ track }) => {
@@ -44,18 +68,30 @@ const Game = () => {
           })
         );
       });
+  }, [accessToken]);
 
-    console.log('tracks', tracks);
-  }, [accessToken, tracks]);
+  useEffect(() => {
+    gameStart();
+  }, [tracks]);
+
+  const randomSong = () => {
+    if (!tracks) return;
+    const randomIndex = Math.floor(Math.random() * TRACK_LIMIT);
+    setSong(tracks[randomIndex]);
+  };
 
   const checkGuess = (e: any) => {
     e.preventDefault();
     if (song === null) return;
 
-    if (guess === song) {
+    if (guess.toLowerCase() === song!.title.toLowerCase()) {
+      rightAnswer();
       setScore(score + 1);
-      // return randomSong
+      setGuess('');
+      setTimer(TIMER_LENGTH);
+      return randomSong();
     }
+    wrongAnswer();
     setLives(lives + 1);
     setGuess('');
     checkLives();
@@ -63,48 +99,99 @@ const Game = () => {
 
   const checkLives = () => {
     if (lives > 3) {
-      return <ScoreBoardModal />;
+      setIsPlaying(false);
+      return (
+        <ScoreBoardModal
+          score={score}
+          startGame={gameStart}
+        />
+      );
     }
   };
 
   const gameStart = () => {
-    // setSong(randomSong)
+    randomSong();
     setGuess('');
     setTimer(TIMER_LENGTH);
     setLives(0);
+    setScore(0);
   };
 
   useEffect(() => {
+    let timeoutId: any;
     if (timer > 0 && lives < 4) {
-      setTimeout(() => setTimer(timer - 1), 1000);
+      timeoutId = setTimeout(() => setTimer(() => timer - 1), 1000);
     }
     if (timer <= 0) {
+      wrongAnswer();
       setLives(lives + 1);
       setTimer(TIMER_LENGTH);
     }
-  }, [lives, timer]);
+    return () => clearTimeout(timeoutId);
+  }, [timer]);
 
-  useEffect(() => {
-    gameStart();
-  }, []);
+  const skipPowerup = () => {
+    randomSong();
+    setGuess('');
+    setTimer(TIMER_LENGTH);
+    wrongAnswer();
+    setLives(lives + 1);
+  };
 
   return (
     <main className='flex min-h-screen min-w-max bg-neutral-900 lg:pb-24'>
       <Sidebar />
       <div className='flex flex-col justify-evenly h-screen w-[80rem] bg-neutral-900 mx-auto'>
         <h1 className='text-4xl font-bold text-gray-200'>GUESSPOT</h1>
-        <div className='bg-green-500 h-1/3 flex items-center justify-center'>
-          <Player
-            accessToken={accessToken}
-            trackUri={'spotify:track:5ODOP1eIQKjtaFBYFSLWaG'}
-          />
+        <div className='bg-green-500 h-1/3 hidden'>
+          {song && (
+            <SpotifyPlayer
+              token={accessToken}
+              uris={song!.uri}
+              autoPlay
+              play={isPlaying}
+            />
+          )}
         </div>
-        <div className='w-full items-center justify-center flex space-x-8'>
-          <BiUndo className='text-6xl cursor-pointer text-gray-200' />
-          <FastForwardIcon
-            className='w-14 cursor-pointer text-gray-200'
-            onClick={getRandomSong}
-          />
+
+        <div className='flex justify-between w-[60rem] mx-auto'>
+          <div className='flex'>
+            {song && (
+              <img
+                src={song.albumUrl}
+                width={250}
+                height={250}
+                alt='album art cover'
+                className='shadow-2xl'
+              />
+            )}
+            <div className='flex flex-col'>
+              <caption className='text-left text-6xl font-bold text-gray-200 m-5'>
+                {song && song.artist}
+              </caption>
+              <div className='w-full items-start justify-start flex space-x-8 mx-5'>
+                <BiUndo className='text-6xl cursor-pointer text-gray-200' />
+                <FastForwardIcon
+                  className='w-14 cursor-pointer text-gray-200'
+                  onClick={() => skipPowerup()}
+                />
+                {isPlaying ? (
+                  <PauseIcon
+                    className='w-14 cursor-pointer text-gray-200'
+                    onClick={() => setIsPlaying(!isPlaying)}
+                  />
+                ) : (
+                  <PlayIcon
+                    className='w-14 cursor-pointer text-gray-200'
+                    onClick={() => setIsPlaying(!isPlaying)}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+          <div className='w-40 text-[10rem] text-bold text-gray-200'>
+            {timer}
+          </div>
         </div>
         <div className='w-full items-center justify-center flex space-x-8'>
           <div className='w-14 h-14 input-shadow rounded-lg'>
@@ -117,7 +204,6 @@ const Game = () => {
             {lives > 2 && <XIcon className='text-red-800' />}
           </div>
         </div>
-        <h1 className='bg-red-500'>{timer}</h1>
         <form
           onSubmit={checkGuess}
           className='relative text-gray-200 text-2xl space-y-3 mx-auto'
@@ -142,6 +228,26 @@ const Game = () => {
           <h2 className='text-gray-200 text-2xl'>{score}</h2>
         </div>
       </div>
+      {showMessage && (
+        <Transition
+          as={Fragment}
+          enter='ease-out duration-300'
+          enterFrom='opacity-0'
+          enterTo='opacity-100'
+          leave='ease-in duration-200'
+          leaveFrom='opacity-100'
+          leaveTo='opacity-0'
+          show
+        >
+          <div className='left-0 right-0 w-full h-full absolute inset-0 bg-black bg-opacity-75 flex justify-center items-center transition-all'>
+            {showMessage === 'right' ? (
+              <CheckCircleIcon className='w-36 cursor-pointer text-green-500' />
+            ) : (
+              <XCircleIcon className='w-36 cursor-pointer text-red-800' />
+            )}
+          </div>
+        </Transition>
+      )}
       {checkLives()}
     </main>
   );

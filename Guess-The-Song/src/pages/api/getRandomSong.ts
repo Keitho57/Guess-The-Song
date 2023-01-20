@@ -17,8 +17,6 @@ switch (Math.round(Math.random())) {
     randomSearch = '%' + randomCharacter + '%';
     break;
 }
-
-return randomSearch;
   try {
     const access_token = req.accessToken;
     const response = await fetch('https://api.spotify.com/v1/tracks/random', {
