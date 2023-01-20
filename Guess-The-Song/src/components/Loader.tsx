@@ -1,5 +1,3 @@
-import Image from 'next/image';
-
 function Loader() {
   return (
     <div className='h-screen bg-neutral-900'>

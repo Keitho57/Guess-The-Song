@@ -10,7 +10,6 @@ interface PlayerIF {
 
 function Player({ accessToken, trackUri }: PlayerIF) {
   const [play, setPlay] = useRecoilState(playState);
-  const [playingTrack, setPlayingTrack] = useRecoilState(playingTrackState);
 
   useEffect(() => {
     if (trackUri) {

@@ -24,7 +24,7 @@ function Poster({ track, chooseTrack }: Pos) {
     <div
       className='h-[360px] w-full rounded-[50px] 
     overflow-hidden relative text-white/80 cursor-pointer hover:scale-105 transition 
-    duration-200 ease-out group mx-auto '
+    duration-200 ease-out group mx-auto'
       onClick={handlePlay}
     >
       <img
@@ -43,7 +43,7 @@ function Poster({ track, chooseTrack }: Pos) {
         items-center justify-center group-hover:bg-[#1db954] flex-shrink-0'
         >
           {track.uri === playingTrack.uri && play ? (
-            <BsFillPauseFill className='text-white text-xl ' />
+            <BsFillPauseFill className='text-white text-xl' />
           ) : (
             <BsFillPlayFill className='text-white text-xl ml-[1px]' />
           )}

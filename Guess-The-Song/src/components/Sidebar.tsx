@@ -10,6 +10,7 @@ import {
   HiQuestionMarkCircle,
 } from 'react-icons/hi';
 import { GiSoundWaves, GiConsoleController } from 'react-icons/gi';
+import Link from 'next/link';
 
 function Sidebar() {
   return (
@@ -28,8 +29,9 @@ function Sidebar() {
         <HiClock className='sidebarIcon' />
         <HiQuestionMarkCircle className='sidebarIcon' />
         <GiSoundWaves className='sidebarIcon' />
-        <GiConsoleController className='sidebarIcon' />
-        <HiDotsHorizontal className='sidebarIcon' />
+        <Link href={'/guesspot'}>
+          <GiConsoleController className='sidebarIcon' />
+        </Link>
       </div>
     </section>
   );

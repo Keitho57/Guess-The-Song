@@ -11,19 +11,15 @@ import Player from './Player';
 function Dashboard() {
   const { data: session } = useSession();
   const accessToken = session?.accessToken;
+
   const [playingTrack, setPlayingTrack] = useRecoilState(playingTrackState);
-  const [showPlayer, setShowPlayer] = useState(false);
-  console.log('accessToken', accessToken);
-  useEffect(() => {
-    setShowPlayer(true);
-  }, []);
 
   const chooseTrack = (track: any) => {
     setPlayingTrack(track);
   };
 
   return (
-    <main className='flex min-h-screen min-w-max bg-neutral-900 lg:pb-24'>
+    <main className='flex min-h-screen min-w-max bg-neutral-900'>
       <Sidebar />
       <Body
         spotifyApi={spotifyApi}
